@@ -7,6 +7,7 @@ import me.anjwoc.management.model.CommentResponse
 import me.anjwoc.management.model.toResponse
 import me.anjwoc.management.repository.CommentRepository
 import me.anjwoc.management.repository.IssueRepository
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -39,6 +40,14 @@ class CommentService (
         return commentRepository.findByIdAndUserId(id, userId)?.run {
             body = request.body
             commentRepository.save(this).toResponse()
+        }
+    }
+
+    @Transactional
+    fun delete(issueId: Long, commentId: Long, userId: Long) {
+        val issue = issuerRepository.findByIdOrNull(issueId) ?: throw NotFoundException("이슈가 존재하지 않습니다.")
+        commentRepository.findByIdAndUserId(commentId, userId)?.let { comment ->
+            issue.comments.remove(comment)
         }
     }
 }
