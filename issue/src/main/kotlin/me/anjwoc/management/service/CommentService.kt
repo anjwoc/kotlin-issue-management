@@ -1,7 +1,6 @@
 package me.anjwoc.management.service
 
 import me.anjwoc.management.domain.Comment
-import me.anjwoc.management.domain.Issue
 import me.anjwoc.management.exception.NotFoundException
 import me.anjwoc.management.model.CommentRequest
 import me.anjwoc.management.model.CommentResponse
@@ -33,5 +32,13 @@ class CommentService (
         issue.comments.add(comment)
 
         return commentRepository.save(comment).toResponse()
+    }
+
+    @Transactional
+    fun edit(id: Long, userId: Long, request: CommentRequest): CommentResponse? {
+        return commentRepository.findByIdAndUserId(id, userId)?.run {
+            body = request.body
+            commentRepository.save(this).toResponse()
+        }
     }
 }
