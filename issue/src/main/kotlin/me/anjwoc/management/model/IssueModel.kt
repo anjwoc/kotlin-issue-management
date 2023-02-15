@@ -1,6 +1,7 @@
 package me.anjwoc.management.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import me.anjwoc.management.domain.Comment
 import me.anjwoc.management.domain.Issue
 import me.anjwoc.management.domain.enums.IssuePriority
 import me.anjwoc.management.domain.enums.IssueStatus
@@ -17,6 +18,7 @@ data class IssueRequest (
 
 data class IssueResponse (
     val id: Long,
+    val comments: List<CommentResponse> = emptyList(),
     val summary: String,
     val description: String,
     val userId: Long,
@@ -41,6 +43,7 @@ data class IssueResponse (
                     summary = summary,
                     description = description,
                     userId = userId,
+                    comments = comments.sortedByDescending(Comment::id).map(Comment::toResponse),
                     type = type,
                     priority = priority,
                     status = status,
